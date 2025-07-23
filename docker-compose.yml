@@ -1,0 +1,49 @@
+version: '3'
+services:
+  mongo-user:
+    image: mongo:5.0
+    ports:
+      - '27018:27017'
+
+  mongo-product:
+    image: mongo:5.0
+    ports:
+      - '27019:27017'
+
+  mongo-order:
+    image: mongo:5.0
+    ports:
+      - '27020:27017'
+
+  user-service:
+    build: ./user-service
+    ports:
+      - '3001:3001'
+    depends_on:
+      - mongo-user
+
+  product-service:
+    build: ./product-service
+    ports:
+      - '3002:3002'
+    depends_on:
+      - mongo-product
+
+  order-service:
+    build: ./order-service
+    ports:
+      - '3003:3003'
+    depends_on:
+      - mongo-order
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '80:3000'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - user-service
+      - product-service
+      - order-service
+
